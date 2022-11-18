@@ -1,0 +1,40 @@
+#armaan chetal 2110994755
+#raspberry pi acts as master and the sensor is the slave
+import time
+import smbus # this library enables the i2c communication
+
+light_sensor=0x23 #this is the default address for the BH1750 light sensor which is stored in the variable light sensor
+POWER_DOWN = 0x00 # No active state
+POWER_ON   = 0x01 # Power on
+RESET      = 0x07 # Reset data register value
+recieved_address=0x23#this is  hexadecimal number
+bus=smbus.SMBus(1) #smbus object calls the SMBus in built method to intiate the smbus library
+
+def light(): #light method assigins the address to the ligh intensity method and returns the value of the 
+    address=bus.read_i2c_block_data(light_sensor,recieved_address)#This function is used to write a block of 32 bytes having device address and register address
+    value=light_intensity(address)
+    return value
+
+def light_intensity(address):
+    result=(address[1]+(256*address[0]))/1.2  # Simple function to convert 2 bytes of data into a decimal number
+    return result
+
+ #differnt range of lux values are set and corrosponding to that message is printed
+    while True:
+        intensity=light()
+        print("light value:",end="")
+        print(light())
+        if(intensity>=500):
+            print("Too bright")
+        elif(intensity>400 and intensity<499):
+            print("bright")
+        elif(intensity>200 and intensity<399):
+            print("medium")
+        elif(intensity>100 and intensity<199):
+            print("dark")
+        elif(intensity>10 and intensity<99):
+            print("too dark")
+        
+        time.sleep(1)
+        
+        
